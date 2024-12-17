@@ -1,0 +1,25 @@
+import pandas as pd
+import matplotlib.pyplot as plt
+file_path = 'zillow.csv'
+df = pd.read_csv(file_path)
+df.columns = df.columns.str.strip().str.replace('"', '').str.replace(' ', '') 
+avg_price_per_year = df.groupby('Year')['ListPrice($)'].mean()
+avg_space_per_year = df.groupby('Year')['LivingSpace(sqft)'].mean()
+avg_baths_per_year = df.groupby('Year')['Baths'].mean()
+plt.figure(figsize=(12, 4))
+plt.subplot(1, 3, 1)
+plt.bar(avg_price_per_year.index, avg_price_per_year.values)
+plt.title("Avg Housing Price v.s. Year")
+plt.subplot(1, 3, 2)
+plt.bar(avg_space_per_year.index, avg_space_per_year.values)
+plt.title("Avg Living Space v.s. Year")
+plt.subplot(1, 3, 3)
+plt.bar(avg_baths_per_year.index, avg_baths_per_year.values)
+plt.title("Avg Bathrooms v.s. Year")
+plt.tight_layout()
+plt.show()
+correlations = df.corr(method='pearson')
+print("Correlation Coefficients:\n", correlations)
+highest_corr = correlations.unstack().sort_values(ascending=False)
+highest_pair = highest_corr.drop_duplicates().iloc[1]
+print("Highest Correlation Pair: ", highest_pair)
